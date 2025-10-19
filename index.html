@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Drop Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-wrapper">
+        <!-- Start Screen -->
+        <div id="start-screen" class="overlay-screen">
+            <img src="img/cw_logo.png" alt="charity: water" class="cw-logo">
+            <h1 class="game-title">WATER QUEST</h1>
+            <p class="game-tagline">Help bring clean water to communities — tap the yellow jerry cans!</p>
+            <p class="start-instructions">Instructions: Tap or click the yellow jerry cans to earn points. Avoid pollutants (oil barrels). You have 30 seconds — good luck!</p>
+            <button id="start-btn" class="primary-btn">Start Game</button>
+            <p class="credits">In partnership with charity: water</p>
+        </div>
+
+        <!-- Top HUD -->
+        <div class="score-panel">
+            <div class="score">Score: <span id="score">0</span></div>
+            <div class="timer">Time: <span id="time">30</span>s</div>
+            <button id="mute-btn" title="Toggle sound">🔊</button>
+        </div>
+
+        <!-- Game area where objects spawn -->
+        <div id="game-container" aria-label="Game area">
+        </div>
+
+        <!-- End Screen -->
+        <div id="end-screen" class="overlay-screen hidden">
+            <h2>Game Over</h2>
+            <p class="final-score">Your score: <span id="final-score">0</span></p>
+            <p class="motivation">Every drop counts! Learn more at <a href="https://charitywater.org" target="_blank">charitywater.org</a></p>
+            <button id="play-again-btn" class="primary-btn">Play Again</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
