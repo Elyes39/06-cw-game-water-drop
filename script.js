@@ -1,26 +1,53 @@
 /* Water Quest - main game script
    Implements: start screen, spawning jerry cans (good) and pollutants (bad),
-   scoring, timer, feedback, sounds, and replay. Works with mouse & touch.
+   scoring, timer, feedback, sounds, difficulty modes, and replay. Works with mouse & touch.
 */
 
 // --- Configuration ---
-const GAME_DURATION = 30; // seconds
-const SPAWN_INTERVAL = 1000; // ms (approx every ~1s)
-const OBJECT_LIFETIME = 980; // ms before disappearing if not clicked 
-const GOOD_SCORE = 10;
-const BAD_SCORE = -5; // or deduct seconds
+const DIFFICULTY_SETTINGS = {
+  easy: {
+    duration: 45,
+    spawnInterval: 1200,
+    objectLifetime: 1100,
+    goodScore: 10,
+    badScore: -3,
+    winScore: 100,
+    label: 'Easy'
+  },
+  normal: {
+    duration: 30,
+    spawnInterval: 1000,
+    objectLifetime: 980,
+    goodScore: 10,
+    badScore: -5,
+    winScore: 150,
+    label: 'Normal'
+  },
+  hard: {
+    duration: 20,
+    spawnInterval: 800,
+    objectLifetime: 850,
+    goodScore: 15,
+    badScore: -8,
+    winScore: 200,
+    label: 'Hard'
+  }
+};
 
 // --- State ---
 let score = 0;
-let timeLeft = GAME_DURATION;
+let timeLeft = 30;
 let spawnTimer = null;
 let countdownTimer = null;
 let gameActive = false;
 let muted = false;
+let currentDifficulty = 'normal';
+let currentSettings = DIFFICULTY_SETTINGS.normal;
 
 // --- Elements ---
 const startBtn = document.getElementById('start-btn');
 const playAgainBtn = document.getElementById('play-again-btn');
+const backToMenuBtn = document.getElementById('back-to-menu-btn');
 const gameContainer = document.getElementById('game-container');
 const scoreEl = document.getElementById('score');
 const timeEl = document.getElementById('time');
@@ -28,6 +55,9 @@ const startScreen = document.getElementById('start-screen');
 const endScreen = document.getElementById('end-screen');
 const finalScoreEl = document.getElementById('final-score');
 const muteBtn = document.getElementById('mute-btn');
+const endTitle = document.getElementById('end-title');
+const resultMessage = document.getElementById('result-message');
+const difficultyButtons = document.querySelectorAll('.difficulty-btn');
 
 // --- Sounds (optional) ---
 const splashSound = new Audio();
@@ -46,15 +76,29 @@ function el(tag = 'div', classNames = []) {
 // --- Game control ---
 startBtn.addEventListener('click', () => startGame());
 playAgainBtn.addEventListener('click', () => startGame());
+backToMenuBtn.addEventListener('click', () => backToMenu());
 muteBtn.addEventListener('click', () => {
   muted = !muted;
   muteBtn.textContent = muted ? '🔇' : '🔊';
 });
 
+// Difficulty selection
+difficultyButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    // Remove active class from all buttons
+    difficultyButtons.forEach(b => b.classList.remove('active'));
+    // Add active class to clicked button
+    btn.classList.add('active');
+    // Update difficulty
+    currentDifficulty = btn.getAttribute('data-difficulty');
+    currentSettings = DIFFICULTY_SETTINGS[currentDifficulty];
+  });
+});
+
 function startGame() {
   // Reset state
   score = 0;
-  timeLeft = GAME_DURATION;
+  timeLeft = currentSettings.duration;
   scoreEl.textContent = score;
   timeEl.textContent = timeLeft;
   finalScoreEl.textContent = score;
@@ -66,7 +110,7 @@ function startGame() {
 
   // Start timers
   gameActive = true;
-  spawnTimer = setInterval(spawnObject, SPAWN_INTERVAL);
+  spawnTimer = setInterval(spawnObject, currentSettings.spawnInterval);
   countdownTimer = setInterval(() => {
     timeLeft -= 1;
     timeEl.textContent = timeLeft;
@@ -80,9 +124,41 @@ function endGame() {
   clearInterval(countdownTimer);
   spawnTimer = null;
   countdownTimer = null;
-  // Show end screen
+  
+  // Check if player won
+  const won = score >= currentSettings.winScore;
+  
+  // Update end screen
   finalScoreEl.textContent = score;
+  
+  if (won) {
+    endTitle.textContent = '🎉 Victory! 🎉';
+    resultMessage.textContent = `Amazing! You reached ${currentSettings.winScore} points on ${currentSettings.label} mode!`;
+    resultMessage.style.color = '#4CAF50';
+  } else {
+    endTitle.textContent = 'Game Over';
+    resultMessage.textContent = `You scored ${score} points. Goal was ${currentSettings.winScore} on ${currentSettings.label} mode. Try again!`;
+    resultMessage.style.color = '#0D2434';
+  }
+  
+  // Show end screen
   endScreen.classList.remove('hidden');
+}
+
+function backToMenu() {
+  // Stop any active game
+  gameActive = false;
+  if (spawnTimer) clearInterval(spawnTimer);
+  if (countdownTimer) clearInterval(countdownTimer);
+  spawnTimer = null;
+  countdownTimer = null;
+  
+  // Hide end screen and show start screen
+  endScreen.classList.add('hidden');
+  startScreen.classList.remove('hidden');
+  
+  // Clear the game area
+  clearGameArea();
 }
 
 function clearGameArea() {
@@ -130,12 +206,16 @@ function spawnObject() {
     if (!gameActive) return;
     e.stopPropagation();
     const type = node.getAttribute('data-type');
+    
+    // Add collected animation class
+    node.classList.add('collected');
+    
     if (type === 'good') {
-      addScore(GOOD_SCORE, e.clientX || (e.touches && e.touches[0].clientX), e.clientY || (e.touches && e.touches[0].clientY));
+      addScore(currentSettings.goodScore, e.clientX || (e.touches && e.touches[0].clientX), e.clientY || (e.touches && e.touches[0].clientY));
       if (!muted) playSound(splashSound);
     } else {
-      // bad: either -5 points or deduct 2 seconds (choose -5 points here)
-      addScore(BAD_SCORE, e.clientX || (e.touches && e.touches[0].clientX), e.clientY || (e.touches && e.touches[0].clientY));
+      // bad: deduct points
+      addScore(currentSettings.badScore, e.clientX || (e.touches && e.touches[0].clientX), e.clientY || (e.touches && e.touches[0].clientY));
       // deduct 2 seconds as an additional penalty sometimes
       if (Math.random() < 0.6) {
         timeLeft = Math.max(0, timeLeft - 2);
@@ -144,9 +224,12 @@ function spawnObject() {
       }
       if (!muted) playSound(buzzSound);
     }
-    // remove object and listeners
-    node.removeEventListener('click', onHit);
-    node.remove();
+    
+    // Remove object after animation completes
+    setTimeout(() => {
+      node.removeEventListener('click', onHit);
+      if (node.parentNode) node.remove();
+    }, 400); // Match animation duration
   };
 
   node.addEventListener('click', onHit);
@@ -154,7 +237,7 @@ function spawnObject() {
 
   // Add to container then schedule removal if not clicked
   gameContainer.appendChild(node);
-  const lifetime = OBJECT_LIFETIME;
+  const lifetime = currentSettings.objectLifetime;
   const rm = setTimeout(() => {
     // gracefully remove
     if (node.parentNode) node.remove();
@@ -224,3 +307,30 @@ document.addEventListener('keydown', (e) => {
 
 // Exports for debugging in console
 window._waterQuest = { startGame, endGame };
+
+// --- Scroll Indicator ---
+const scrollIndicator = document.getElementById('scroll-indicator');
+
+function handleScroll() {
+  if (!scrollIndicator) return;
+  
+  // Calculate how far user has scrolled
+  const windowHeight = window.innerHeight;
+  const documentHeight = document.documentElement.scrollHeight;
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  
+  // Hide indicator when user scrolls near the bottom (within 200px)
+  const scrolledToBottom = scrollTop + windowHeight >= documentHeight - 200;
+  
+  if (scrolledToBottom) {
+    scrollIndicator.classList.add('hidden');
+  } else {
+    scrollIndicator.classList.remove('hidden');
+  }
+}
+
+// Listen for scroll events
+window.addEventListener('scroll', handleScroll);
+
+// Initial check on page load
+handleScroll();

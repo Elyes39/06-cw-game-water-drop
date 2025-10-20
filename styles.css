@@ -3,8 +3,9 @@
 Brand colors used in this project:
 - Yellow:     #FFD100  (primary jerry can)
 - Light Blue: #DDF3FF  (background)
+- Dark:       #0D2434  (text)
 
-Font: simple sans-serif for broad compatibility
+Font: Helvetica Neue (charity: water brand font), with fallbacks
 */
 
 * {
@@ -15,11 +16,13 @@ Font: simple sans-serif for broad compatibility
 
 body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     background-color: #DDF3FF; /* light blue background */
-    font-family: Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 20px 0;
 }
 
 .game-wrapper {
@@ -109,6 +112,33 @@ body {
     background-position: center;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.jerry:hover {
+    transform: scale(1.05);
+}
+
+/* Click/collect animation */
+.jerry.collected,
+.pollutant.collected {
+    animation: collectObject 0.4s ease-out forwards;
+}
+
+@keyframes collectObject {
+    0% { 
+        transform: scale(1); 
+        opacity: 1; 
+    }
+    50% { 
+        transform: scale(1.3) rotate(10deg); 
+        opacity: 0.8; 
+    }
+    100% { 
+        transform: scale(0) rotate(20deg); 
+        opacity: 0; 
+    }
 }
 
 /* Pollutant (bad object) - reuse water can image but tint/replace with emoji if needed */
@@ -123,6 +153,12 @@ body {
     justify-content: center;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.pollutant:hover {
+    transform: scale(1.05);
 }
 
 /* Floating feedback text */
@@ -182,6 +218,29 @@ body {
 
 .primary-btn:hover { filter: brightness(0.95); }
 
+.secondary-btn {
+    background-color: transparent;
+    border: 2px solid #0D2434;
+    color: #0D2434;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+    background-color: #0D2434;
+    color: white;
+}
+
+.end-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
 .final-score { font-size: 24px; font-weight: bold; }
 
 .credits { font-size: 12px; color: #333; }
@@ -223,4 +282,232 @@ body {
     .cw-logo { width: 140px; }
     .game-title { font-size: 36px; }
     .start-instructions { max-width: 86vw; font-size: 15px; }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .difficulty-buttons {
+        flex-direction: column;
+    }
+    
+    .difficulty-btn {
+        width: 100%;
+    }
+}
+
+/* Difficulty Selector Styles */
+.difficulty-selector {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.difficulty-selector h3 {
+    margin-bottom: 15px;
+    color: #0D2434;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.difficulty-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.difficulty-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 20px;
+    background: white;
+    border: 3px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px;
+}
+
+.difficulty-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.difficulty-btn.active {
+    border-color: #FFD100;
+    background-color: #FFFEF5;
+    box-shadow: 0 2px 8px rgba(255,209,0,0.3);
+}
+
+.diff-name {
+    font-weight: bold;
+    font-size: 18px;
+    color: #0D2434;
+    margin-bottom: 6px;
+}
+
+.diff-desc {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Result Message */
+.result-message {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 10px 0;
+    color: #0D2434;
+}
+
+/* Footer Styles */
+.game-footer {
+    width: 100%;
+    background-color: #0D2434;
+    color: white;
+    padding: 40px 20px 20px;
+    margin-top: 40px;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.footer-brand {
+    flex: 1;
+    min-width: 250px;
+}
+
+.footer-logo {
+    width: 150px;
+    margin-bottom: 15px;
+    filter: brightness(0) invert(1);
+}
+
+.footer-tagline {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #DDF3FF;
+    max-width: 300px;
+}
+
+.footer-links,
+.footer-donate {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-links h4,
+.footer-donate h4 {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: #FFD100;
+}
+
+.footer-links ul {
+    list-style: none;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: #DDF3FF;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #FFD100;
+}
+
+.donate-btn {
+    display: inline-block;
+    background-color: #FFD100;
+    color: #0D2434;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.donate-btn:hover {
+    background-color: #FFC700;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255,209,0,0.4);
+}
+
+.donate-info {
+    font-size: 12px;
+    color: #DDF3FF;
+    font-style: italic;
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 30px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    text-align: center;
+    font-size: 12px;
+    color: #DDF3FF;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.scroll-indicator.hidden {
+    opacity: 0;
+}
+
+.scroll-text {
+    font-size: 14px;
+    color: #0D2434;
+    font-weight: 500;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.scroll-arrow {
+    font-size: 32px;
+    color: #FFD100;
+    animation: bounce 2s infinite;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
 }

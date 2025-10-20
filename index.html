@@ -13,7 +13,27 @@
             <img src="img/cw_logo.png" alt="charity: water" class="cw-logo">
             <h1 class="game-title">WATER QUEST</h1>
             <p class="game-tagline">Help bring clean water to communities — tap the yellow jerry cans!</p>
-            <p class="start-instructions">Instructions: Tap or click the yellow jerry cans to earn points. Avoid pollutants (oil barrels). You have 30 seconds — good luck!</p>
+            <p class="start-instructions">Instructions: Tap or click the yellow jerry cans to earn points. Avoid pollutants (oil barrels). Choose your difficulty and start playing!</p>
+            
+            <!-- Difficulty Selection -->
+            <div class="difficulty-selector">
+                <h3>Select Difficulty:</h3>
+                <div class="difficulty-buttons">
+                    <button class="difficulty-btn" data-difficulty="easy">
+                        <span class="diff-name">Easy</span>
+                        <span class="diff-desc">45s • Win at 100pts</span>
+                    </button>
+                    <button class="difficulty-btn active" data-difficulty="normal">
+                        <span class="diff-name">Normal</span>
+                        <span class="diff-desc">30s • Win at 150pts</span>
+                    </button>
+                    <button class="difficulty-btn" data-difficulty="hard">
+                        <span class="diff-name">Hard</span>
+                        <span class="diff-desc">20s • Win at 200pts</span>
+                    </button>
+                </div>
+            </div>
+            
             <button id="start-btn" class="primary-btn">Start Game</button>
             <p class="credits">In partnership with charity: water</p>
         </div>
@@ -31,12 +51,48 @@
 
         <!-- End Screen -->
         <div id="end-screen" class="overlay-screen hidden">
-            <h2>Game Over</h2>
+            <h2 id="end-title">Game Over</h2>
             <p class="final-score">Your score: <span id="final-score">0</span></p>
-            <p class="motivation">Every drop counts! Learn more at <a href="https://charitywater.org" target="_blank">charitywater.org</a></p>
-            <button id="play-again-btn" class="primary-btn">Play Again</button>
+            <p id="result-message" class="result-message"></p>
+            <p class="motivation">Every drop counts! Learn more at <a href="https://www.charitywater.org" target="_blank" rel="noopener">charitywater.org</a></p>
+            <div class="end-buttons">
+                <button id="play-again-btn" class="primary-btn">Play Again</button>
+                <button id="back-to-menu-btn" class="secondary-btn">Back to Menu</button>
+            </div>
         </div>
     </div>
+    
+    <!-- Scroll Indicator -->
+    <div id="scroll-indicator" class="scroll-indicator">
+        <span class="scroll-text">Scroll down to learn more</span>
+        <div class="scroll-arrow">↓</div>
+    </div>
+    
+    <!-- Footer with charity: water links -->
+    <footer class="game-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="img/cw_logo.png" alt="charity: water" class="footer-logo">
+                <p class="footer-tagline">Bringing clean and safe drinking water to people in developing countries</p>
+            </div>
+            <div class="footer-links">
+                <h4>Learn More</h4>
+                <ul>
+                    <li><a href="https://www.charitywater.org/about" target="_blank" rel="noopener">About Us</a></li>
+                    <li><a href="https://www.charitywater.org/our-projects" target="_blank" rel="noopener">Our Projects</a></li>
+                    <li><a href="https://www.charitywater.org/the-spring" target="_blank" rel="noopener">Monthly Giving</a></li>
+                </ul>
+            </div>
+            <div class="footer-donate">
+                <h4>Make an Impact</h4>
+                <a href="https://www.charitywater.org/donate" target="_blank" rel="noopener" class="donate-btn">Donate Now</a>
+                <p class="donate-info">100% of your donation funds clean water projects</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 charity: water. All rights reserved. | This game was created to raise awareness about the global water crisis.</p>
+        </div>
+    </footer>
     
     <script src="script.js"></script>
 </body>
